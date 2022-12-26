@@ -1,14 +1,18 @@
-def bank():
+def main():
     user_input = input("Greeting: ").strip().lower()
-    all_words = user_input.split()
-    first_word = all_words[0].replace(",", "")
+    print(f"${value(user_input)}")
 
-    if user_input == "hello" or first_word == "hello":
-        print("$0")
-    elif user_input[0] == "h":
-        print("$20")
+
+def value(greeting):
+    greeting = greeting.strip().lower()
+
+    if "hello" in greeting:
+        return 0
+    elif greeting[0] == "h":
+        return 20
     else:
-        print("$100")
+        return 100
 
 
-bank()
+if __name__ == "__main__":
+    main()
