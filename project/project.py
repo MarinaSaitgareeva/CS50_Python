@@ -18,3 +18,18 @@ def get_diet():
 
         except Exception:
             continue
+
+
+def get_meal_type():
+    while True:
+        available_meal_type = ["none", "main course", "side dish", "dessert", "appetizer", "salad", "bread", "breakfast", "soup", "beverage", "sauce", "marinade", "fingerfood", "snack", "drink"]
+        selected_meal_type = input("\n Select meal type: \n 1. None \n 2. Main course \n 3. Side dish \n 4. Dessert \n 5. Appetizer \n 6. Salad \n 7. Bread \n 8. Breakfast \n 9. Soup \n 10. Beverage \n 11. Sauce \n 12. Marinade \n 13. Fingerfood \n 14. Snack \n 15. Drink \n Your meal type: ").strip()
+
+        try:
+            if not selected_meal_type:
+                return ""
+            elif 0 < int(selected_meal_type) < 15:
+                return available_meal_type[int(selected_meal_type) - 1]
+
+        except Exception:
+            continue
