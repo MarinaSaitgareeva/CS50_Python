@@ -58,6 +58,17 @@ def get_ingredients():
         return ingredients.lower()
 
 
+def get_max_ready_time():
+    while True:
+        max_ready_time = input("\n The maximum time in minutes it should take to prepare and cook the recipe: ").strip()
+
+        try:
+            return int(max_ready_time)
+
+        except Exception:
+            continue
+
+
 def get_recipes(diet, meal_type, ingredients, max_ready_time, number):
     url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch"
 
