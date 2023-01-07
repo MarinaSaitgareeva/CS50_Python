@@ -10,8 +10,8 @@ def main():
         max_ready_time = get_max_ready_time()
 
         try:
-            recipies = get_recipes(diet, meal_type, ingredients, max_ready_time, 100)
-            recipe = get_random_recipe(recipies)
+            recipes = get_recipes(diet, meal_type, ingredients, max_ready_time, 100)
+            recipe = get_random_recipe(recipes)
             return print(recipe)
 
         except Exception:
