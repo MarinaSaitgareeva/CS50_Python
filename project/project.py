@@ -44,12 +44,26 @@ def get_ingredients():
         return ingredients.lower()
 
 
-def get_max_ready_time():
-    while True:
-        max_ready_time = input("\n The maximum time in minutes it should take to prepare and cook the recipe: ").strip()
+def get_recipes(diet, meal_type, ingredients, max_ready_time, number):
+    url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch"
 
-        try:
-            return int(max_ready_time)
+    # ranking - Whether to maximize used ingredients (1) or minimize missing ingredients (2) first.
+    # ignorePantry - Whether to ignore typical pantry items, such as water, salt, flour, etc.
+    querystring = {
+        "diet": diet,
+        "type": meal_type,
+        "includeIngredients": ingredients,
+        "ignorePantry": "true",
+        # "cuisine": cuisine,
+        "maxReadyTime": max_ready_time,
+        "number": number,
+    }
 
-        except Exception:
-            continue
+    headers = {
+        "X-RapidAPI-Key": "fad3c2e0d1mshac32fe2d91a63fdp12595bjsncf3b07bd3765",
+        "X-RapidAPI-Host": "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+    }
+    response = requests.request("GET", url, headers=headers, params=querystring)
+    data = response.json()
+
+    return data["results"]
