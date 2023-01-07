@@ -67,3 +67,31 @@ def get_recipes(diet, meal_type, ingredients, max_ready_time, number):
     data = response.json()
 
     return data["results"]
+
+
+def get_random_recipe(recipes):
+    recipe_number = random.randint(0, len(recipes))
+    id = recipes[recipe_number]["id"]
+
+    url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/{id}/information"
+    headers = {
+        "X-RapidAPI-Key": "fad3c2e0d1mshac32fe2d91a63fdp12595bjsncf3b07bd3765",
+        "X-RapidAPI-Host": "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+    }
+    response = requests.request("GET", url, headers=headers)
+    data = response.json()
+
+    recipe_data = {
+        "title": data["title"],
+        "image": data["image"],
+        "servings": data["servings"],
+        "readyInMinutes": data["readyInMinutes"],
+        "cuisines": data["cuisines"],
+        "diets": data["diets"],
+        "dishTypes": data["dishTypes"],
+        "extendedIngredients": data["extendedIngredients"],
+        "summary": data["summary"],
+        "winePairing": data["winePairing"]
+    }
+
+    return recipe_data
