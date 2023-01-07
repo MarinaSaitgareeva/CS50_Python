@@ -2,6 +2,20 @@ import requests
 import random
 
 
+def main():
+    while True:
+        diet = get_diet()
+        meal_type = get_meal_type()
+        ingredients = get_ingredients()
+        max_ready_time = get_max_ready_time()
+
+        try:
+            recipies = get_recipes(diet, meal_type, ingredients, max_ready_time, 100)
+            recipe = get_random_recipe(recipies)
+            return print(recipe)
+
+        except Exception:
+            continue
 
 
 def get_diet():
@@ -95,3 +109,7 @@ def get_random_recipe(recipes):
     }
 
     return recipe_data
+
+
+if __name__ == "__main__":
+    main()
