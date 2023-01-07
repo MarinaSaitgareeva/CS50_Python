@@ -33,3 +33,12 @@ def get_meal_type():
 
         except Exception:
             continue
+
+
+def get_ingredients():
+    while True:
+        ingredients = input("\n A comma-separated list of ingredients that the recipes should contain: ").strip()
+
+        if (not ingredients) or ingredients.isnumeric():
+            continue
+        return ingredients.lower()
