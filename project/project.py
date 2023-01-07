@@ -42,3 +42,14 @@ def get_ingredients():
         if (not ingredients) or ingredients.isnumeric():
             continue
         return ingredients.lower()
+
+
+def get_max_ready_time():
+    while True:
+        max_ready_time = input("\n The maximum time in minutes it should take to prepare and cook the recipe: ").strip()
+
+        try:
+            return int(max_ready_time)
+
+        except Exception:
+            continue
