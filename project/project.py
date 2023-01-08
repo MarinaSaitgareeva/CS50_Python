@@ -14,7 +14,8 @@ def main():
             recipe = get_random_recipe(recipes)
             return print(recipe)
 
-        except Exception:
+        except Exception as e:
+            print(e)
             continue
 
 
@@ -106,7 +107,24 @@ def get_random_recipe(recipes):
     response = requests.request("GET", url, headers=headers)
     data = response.json()
 
+    recipe_ingredients = []
+
+    for ingredient in data["extendedIngredients"]:
+        ingredient_data = {
+            "name": ingredient["name"],
+            "original": ingredient["original"],
+            "id": ingredient["id"],
+            "image": ingredient["image"],
+            "amount": ingredient["amount"],
+            "unit": ingredient["unit"],
+            "original": ingredient["original"],
+            }
+        recipe_ingredients.append(ingredient_data)
+
+    recipe_instructions = get_recipe_instructions(id)
+
     recipe_data = {
+        "id": data["id"],
         "title": data["title"],
         "image": data["image"],
         "servings": data["servings"],
@@ -114,12 +132,41 @@ def get_random_recipe(recipes):
         "cuisines": data["cuisines"],
         "diets": data["diets"],
         "dishTypes": data["dishTypes"],
-        "extendedIngredients": data["extendedIngredients"],
+        "extendedIngredients": recipe_ingredients,
         "summary": data["summary"],
-        "winePairing": data["winePairing"]
+        "winePairing": data["winePairing"],
+        "sourceUrl": data["sourceUrl"],
+        "recipe_instructions": recipe_instructions,
     }
 
     return recipe_data
+
+
+def get_recipe_instructions(recipe_id):
+    url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/{recipe_id}/analyzedInstructions"
+
+    querystring = {"stepBreakdown":"true"}
+
+    headers = {
+        "X-RapidAPI-Key": "fad3c2e0d1mshac32fe2d91a63fdp12595bjsncf3b07bd3765",
+        "X-RapidAPI-Host": "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com"
+    }
+
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    data = response.json()
+
+    recipe_instructions = []
+
+    for step in data[0]["steps"]:
+        step = {
+            "number": step["number"],
+            "step": step["step"],
+        }
+
+        recipe_instructions.append(step)
+
+    return recipe_instructions
 
 
 if __name__ == "__main__":
