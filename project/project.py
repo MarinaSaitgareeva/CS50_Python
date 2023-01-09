@@ -1,5 +1,8 @@
 import requests
 import random
+from fpdf import FPDF
+import sys
+import os
 
 
 def main():
@@ -10,9 +13,16 @@ def main():
         max_ready_time = get_max_ready_time()
 
         try:
-            recipes = get_recipes(diet, meal_type, ingredients, max_ready_time, 100)
+            recipes = get_recipes(
+                diet,
+                meal_type,
+                ingredients,
+                max_ready_time,
+                100
+            )
             recipe = get_random_recipe(recipes)
-            return print(recipe)
+            print(f"\n Recipe title: {recipe['title']}")
+            save_recipe_in_pdf(recipe)
 
         except Exception as e:
             print(e)
@@ -21,9 +31,37 @@ def main():
 
 def get_diet():
     while True:
-        available_diets = ["None", "Gluten Free", "Ketogenic", "Vegetarian", "Lacto-Vegetarian", "Ovo-Vegetarian", "Vegan", "Pescetarian", "Paleo", "Primal", "Low FODMAP", "Whole30"]
+        available_diets = [
+            "None",
+            "Gluten Free",
+            "Ketogenic",
+            "Vegetarian",
+            "Lacto-Vegetarian",
+            "Ovo-Vegetarian",
+            "Vegan",
+            "Pescetarian",
+            "Paleo",
+            "Primal",
+            "Low FODMAP",
+            "Whole30"
+        ]
 
-        selected_diet = input("\n Select diet type: \n 1. None \n 2. Gluten Free\n 3. Ketogenic \n 4. Vegetarian \n 5. Lacto-Vegetarian \n 6. Ovo-Vegetarian \n 7. Vegan \n 8. Pescetarian \n 9. Paleo \n 10. Primal \n 11. Low FODMAP \n 12. Whole30 \n Your diet type: ").strip()
+        selected_diet = input(
+            "\n Select diet type: \n \
+            1. None \n \
+            2. Gluten Free\n \
+            3. Ketogenic \n \
+            4. Vegetarian \n \
+            5. Lacto-Vegetarian \n \
+            6. Ovo-Vegetarian \n \
+            7. Vegan \n \
+            8. Pescetarian \n \
+            9. Paleo \n \
+            10. Primal \n \
+            11. Low FODMAP \n \
+            12. Whole30 \n \
+            Your diet type: "
+        ).strip()
 
         try:
             if not selected_diet:
@@ -37,8 +75,42 @@ def get_diet():
 
 def get_meal_type():
     while True:
-        available_meal_type = ["none", "main course", "side dish", "dessert", "appetizer", "salad", "bread", "breakfast", "soup", "beverage", "sauce", "marinade", "fingerfood", "snack", "drink"]
-        selected_meal_type = input("\n Select meal type: \n 1. None \n 2. Main course \n 3. Side dish \n 4. Dessert \n 5. Appetizer \n 6. Salad \n 7. Bread \n 8. Breakfast \n 9. Soup \n 10. Beverage \n 11. Sauce \n 12. Marinade \n 13. Fingerfood \n 14. Snack \n 15. Drink \n Your meal type: ").strip()
+        available_meal_type = [
+            "none",
+            "main course",
+            "side dish",
+            "dessert",
+            "appetizer",
+            "salad",
+            "bread",
+            "breakfast",
+            "soup",
+            "beverage",
+            "sauce",
+            "marinade",
+            "fingerfood",
+            "snack",
+            "drink"
+        ]
+        selected_meal_type = input(
+            "\n Select meal type: \n \
+            1. None \n \
+            2. Main course \n \
+            3. Side dish \n \
+            4. Dessert \n \
+            5. Appetizer \n \
+            6. Salad \n \
+            7. Bread \n \
+            8. Breakfast \n \
+            9. Soup \n \
+            10. Beverage \n \
+            11. Sauce \n \
+            12. Marinade \n \
+            13. Fingerfood \n \
+            14. Snack \n \
+            15. Drink \n \
+            Your meal type: "
+        ).strip()
 
         try:
             if not selected_meal_type:
@@ -52,7 +124,9 @@ def get_meal_type():
 
 def get_ingredients():
     while True:
-        ingredients = input("\n A comma-separated list of ingredients that the recipes should contain: ").strip()
+        ingredients = input(
+            "\n A comma-separated list of ingredients that the recipes should contain: "
+            ).strip()
 
         if (not ingredients) or ingredients.isnumeric():
             continue
@@ -61,7 +135,9 @@ def get_ingredients():
 
 def get_max_ready_time():
     while True:
-        max_ready_time = input("\n The maximum time in minutes it should take to prepare and cook the recipe: ").strip()
+        max_ready_time = input(
+            "\n The maximum time in minutes it should take to prepare and cook the recipe: "
+            ).strip()
 
         try:
             return int(max_ready_time)
@@ -73,7 +149,6 @@ def get_max_ready_time():
 def get_recipes(diet, meal_type, ingredients, max_ready_time, number):
     url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/complexSearch"
 
-    # ranking - Whether to maximize used ingredients (1) or minimize missing ingredients (2) first.
     # ignorePantry - Whether to ignore typical pantry items, such as water, salt, flour, etc.
     querystring = {
         "diet": diet,
@@ -97,6 +172,7 @@ def get_recipes(diet, meal_type, ingredients, max_ready_time, number):
 
 def get_random_recipe(recipes):
     recipe_number = random.randint(0, len(recipes))
+    print(f"{recipe_number} in {len(recipes)} recipes")
     id = recipes[recipe_number]["id"]
 
     url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/{id}/information"
@@ -133,9 +209,9 @@ def get_random_recipe(recipes):
         "diets": data["diets"],
         "dishTypes": data["dishTypes"],
         "extendedIngredients": recipe_ingredients,
-        "summary": data["summary"],
-        "winePairing": data["winePairing"],
-        "sourceUrl": data["sourceUrl"],
+        # "summary": data["summary"],
+        # "winePairing": data["winePairing"],
+        # "sourceUrl": data["sourceUrl"],
         "recipe_instructions": recipe_instructions,
     }
 
@@ -168,6 +244,88 @@ def get_recipe_instructions(recipe_id):
 
     return recipe_instructions
 
+
+class PDF:
+    def __init__(self, id, title, servings, readyInMinutes):
+        # By default, a FPDF document has a A4 format with
+        # portrait orientation (orientation="portrait", format="A4").
+        self._pdf = FPDF(orientation="P", unit="mm", format="A4")
+        self._pdf.add_page()
+        # Setting font: GoodUnicornRegular 20.
+        self._pdf.add_font("GoodUnicornRegular-Rxev", "", "GoodUnicornRegular-Rxev.ttf", uni=True)
+        self._pdf.set_font("GoodUnicornRegular-Rxev", size=40)
+        # Printing title.
+        self._pdf.cell(
+            w=0, h=10, txt=f"{title}", align="C", ln = 1,
+        )
+         # Setting font: helvetica bold 20.
+        self._pdf.set_font("Arial", size=8)
+        # Setting color: white.
+        # self._pdf.set_text_color(255, 255, 255)
+        # Printing servings + readyInMinutes.
+        self._pdf.cell(
+            w=0,
+            h=10,
+            txt=f"for {servings} servings - ready in {readyInMinutes} ",
+            align="C",
+            ln = 1,
+        )
+        # Adding image.
+        self._pdf.image(f"{id}.jpg", w=50, h=50, x=80, y=30)
+
+
+    def save(self, title):
+        title = f"{title.replace(' ', '_')}.pdf"
+        self._pdf.output(title)
+
+
+def save_recipe_in_pdf(recipe):
+    while True:
+        save_recipe = input("\n Do you want to save recipe? (yes or no): ").strip().lower()
+
+        if save_recipe not in ["yes", "no"]:
+            continue 
+
+        elif save_recipe == "yes":
+            id = recipe["id"]
+            title = recipe["title"]
+            # image = recipe["image"]
+            img_data = requests.get(recipe["image"]).content
+            with open(f"{id}.jpg", "wb") as handler:
+                handler.write(img_data)
+
+            servings = recipe["servings"]
+            readyInMinutes = f"{recipe['readyInMinutes']} min"
+
+            # if len(recipe["cuisines"]) > 0:
+            #     cuisines = str(recipe["cuisines"])
+            # else:
+            #     cuisines = "not specified"
+
+            # if len(recipe["diets"]) > 0:
+            #     diets = str(recipe["diets"])
+            # else:
+            #     diets = "not specified"
+
+            # if len(recipe["dishTypes"]) > 0:
+            #     dishTypes = str(recipe["dishTypes"])
+            # else:
+            #     dishTypes = "not specified"
+            
+            pdf = PDF(id, title, servings, readyInMinutes)
+            pdf.save(title)
+            os.remove(f"{id}.jpg")
+            os.remove("GoodUnicornRegular-Rxev.pkl")
+            sys.exit()
+
+        elif save_recipe == "no":
+            try_again = input("\n Do you want to try again? (yes, no): ").strip().lower()
+
+            if try_again == "yes":
+                main()
+            else:
+                sys.exit()
+    
 
 if __name__ == "__main__":
     main()
