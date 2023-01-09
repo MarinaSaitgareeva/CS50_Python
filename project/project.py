@@ -205,12 +205,12 @@ def get_random_recipe(recipes):
         "image": data["image"],
         "servings": data["servings"],
         "readyInMinutes": data["readyInMinutes"],
-        "cuisines": data["cuisines"],
-        "diets": data["diets"],
-        "dishTypes": data["dishTypes"],
+        # "cuisines": data["cuisines"],
+        # "diets": data["diets"],
+        # "dishTypes": data["dishTypes"],
         "extendedIngredients": recipe_ingredients,
         # "summary": data["summary"],
-        # "winePairing": data["winePairing"],
+        "winePairing": data["winePairing"],
         # "sourceUrl": data["sourceUrl"],
         "recipe_instructions": recipe_instructions,
     }
@@ -246,32 +246,44 @@ def get_recipe_instructions(recipe_id):
 
 
 class PDF:
-    def __init__(self, id, title, servings, readyInMinutes):
+    def __init__(self, id, title, servings, readyInMinutes, extendedIngredients, recipe_instructions):
         # By default, a FPDF document has a A4 format with
         # portrait orientation (orientation="portrait", format="A4").
         self._pdf = FPDF(orientation="P", unit="mm", format="A4")
         self._pdf.add_page()
-        # Setting font: GoodUnicornRegular 20.
-        self._pdf.add_font("GoodUnicornRegular-Rxev", "", "GoodUnicornRegular-Rxev.ttf", uni=True)
-        self._pdf.set_font("GoodUnicornRegular-Rxev", size=40)
-        # Printing title.
-        self._pdf.cell(
-            w=0, h=10, txt=f"{title}", align="C", ln = 1,
-        )
-         # Setting font: helvetica bold 20.
-        self._pdf.set_font("Arial", size=8)
+        
         # Setting color: white.
         # self._pdf.set_text_color(255, 255, 255)
+        # Setting font: GoodUnicornRegular 40.
+        self._pdf.add_font("GoodUnicornRegular-Rxev", "", "GoodUnicornRegular-Rxev.ttf", uni=True)
+        self._pdf.set_font("GoodUnicornRegular-Rxev", size=30)
+        # Printing title.
+        self._pdf.multi_cell(
+            w=0, h=10, txt=f"{title.strip().capitalize()}", align="C",
+        )
+        # Setting font: Arial 8.
+        self._pdf.set_font("Arial", size=8)
         # Printing servings + readyInMinutes.
         self._pdf.cell(
             w=0,
-            h=10,
+            h=8,
             txt=f"for {servings} servings - ready in {readyInMinutes} ",
             align="C",
             ln = 1,
         )
         # Adding image.
-        self._pdf.image(f"{id}.jpg", w=50, h=50, x=80, y=30)
+        self._pdf.image(f"{id}.jpeg", w=50, h=50, x=80, y=40)
+        # Move cursor down after the image.
+        self._pdf.set_y(100)
+        # Setting font: Arial 8.
+        self._pdf.set_font("Arial", size=8)
+        # Printing extendedIngredients + recipe_instructions.
+        self._pdf.multi_cell(
+            w=0,
+            h=6,
+            txt=f"{extendedIngredients} \n {recipe_instructions}",
+            align="L",
+        )
 
 
     def save(self, title):
@@ -289,33 +301,29 @@ def save_recipe_in_pdf(recipe):
         elif save_recipe == "yes":
             id = recipe["id"]
             title = recipe["title"]
-            # image = recipe["image"]
             img_data = requests.get(recipe["image"]).content
-            with open(f"{id}.jpg", "wb") as handler:
+            with open(f"{id}.jpeg", "wb") as handler:
                 handler.write(img_data)
 
             servings = recipe["servings"]
             readyInMinutes = f"{recipe['readyInMinutes']} min"
 
-            # if len(recipe["cuisines"]) > 0:
-            #     cuisines = str(recipe["cuisines"])
-            # else:
-            #     cuisines = "not specified"
+            extendedIngredients = "Ingredients: \n"
+            for extendedIngredient in recipe["extendedIngredients"]:
+                extendedIngredients += f"{extendedIngredient['original']} \n"
 
-            # if len(recipe["diets"]) > 0:
-            #     diets = str(recipe["diets"])
-            # else:
-            #     diets = "not specified"
-
-            # if len(recipe["dishTypes"]) > 0:
-            #     dishTypes = str(recipe["dishTypes"])
-            # else:
-            #     dishTypes = "not specified"
+            recipe_instructions = "Recipe instructions: \n"
+            for recipe_instruction in recipe["recipe_instructions"]:
+                recipe_instructions += f"{recipe_instruction['number']}. {recipe_instruction['step']} \n"
             
-            pdf = PDF(id, title, servings, readyInMinutes)
+            print(recipe)
+            
+            pdf = PDF(id, title, servings, readyInMinutes, extendedIngredients, recipe_instructions)
             pdf.save(title)
-            os.remove(f"{id}.jpg")
+
+            os.remove(f"{id}.jpeg")
             os.remove("GoodUnicornRegular-Rxev.pkl")
+
             sys.exit()
 
         elif save_recipe == "no":
