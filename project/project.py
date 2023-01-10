@@ -3,6 +3,7 @@ import random
 from fpdf import FPDF
 import sys
 import os
+import mimetypes
 
 
 def main():
@@ -189,11 +190,10 @@ def get_random_recipe(recipes):
         ingredient_data = {
             "name": ingredient["name"],
             "original": ingredient["original"],
-            "id": ingredient["id"],
+            # "id": ingredient["id"],
             "image": ingredient["image"],
-            "amount": ingredient["amount"],
-            "unit": ingredient["unit"],
-            "original": ingredient["original"],
+            # "amount": ingredient["amount"],
+            # "unit": ingredient["unit"],
             }
         recipe_ingredients.append(ingredient_data)
 
@@ -210,7 +210,7 @@ def get_random_recipe(recipes):
         # "dishTypes": data["dishTypes"],
         "extendedIngredients": recipe_ingredients,
         # "summary": data["summary"],
-        "winePairing": data["winePairing"],
+        # "winePairing": data["winePairing"],
         # "sourceUrl": data["sourceUrl"],
         "recipe_instructions": recipe_instructions,
     }
@@ -246,7 +246,7 @@ def get_recipe_instructions(recipe_id):
 
 
 class PDF:
-    def __init__(self, id, title, servings, readyInMinutes, extendedIngredients, recipe_instructions):
+    def __init__(self, id, title, servings, ready_in_minutes, extended_ingredients, recipe_instructions, extension):
         # By default, a FPDF document has a A4 format with
         # portrait orientation (orientation="portrait", format="A4").
         self._pdf = FPDF(orientation="P", unit="mm", format="A4")
@@ -267,12 +267,12 @@ class PDF:
         self._pdf.cell(
             w=0,
             h=8,
-            txt=f"for {servings} servings - ready in {readyInMinutes} ",
+            txt=f"for {servings} servings - ready in {ready_in_minutes} ",
             align="C",
             ln = 1,
         )
         # Adding image.
-        self._pdf.image(f"{id}.jpeg", w=50, h=50, x=80, y=40)
+        self._pdf.image(f"{id}.{extension}", w=50, h=50, x=80, y=40)
         # Move cursor down after the image.
         self._pdf.set_y(100)
         # Setting font: Arial 8.
@@ -281,7 +281,7 @@ class PDF:
         self._pdf.multi_cell(
             w=0,
             h=6,
-            txt=f"{extendedIngredients} \n {recipe_instructions}",
+            txt=f"{extended_ingredients} \n {recipe_instructions}",
             align="L",
         )
 
@@ -301,27 +301,28 @@ def save_recipe_in_pdf(recipe):
         elif save_recipe == "yes":
             id = recipe["id"]
             title = recipe["title"]
+
             img_data = requests.get(recipe["image"]).content
-            with open(f"{id}.jpeg", "wb") as handler:
+            content_type = requests.get(recipe["image"]).headers["content-type"]
+            extension = mimetypes.guess_extension(content_type)
+            with open(f"{id}.{extension}", "wb") as handler:
                 handler.write(img_data)
 
             servings = recipe["servings"]
-            readyInMinutes = f"{recipe['readyInMinutes']} min"
+            ready_in_minutes = f"{recipe['readyInMinutes']} min"
 
-            extendedIngredients = "Ingredients: \n"
-            for extendedIngredient in recipe["extendedIngredients"]:
-                extendedIngredients += f"{extendedIngredient['original']} \n"
+            extended_ingredients = "Ingredients: \n"
+            for extended_ingredient in recipe["extendedIngredients"]:
+                extended_ingredients += f"{extended_ingredient['original']} \n"
 
             recipe_instructions = "Recipe instructions: \n"
             for recipe_instruction in recipe["recipe_instructions"]:
                 recipe_instructions += f"{recipe_instruction['number']}. {recipe_instruction['step']} \n"
-            
-            print(recipe)
-            
-            pdf = PDF(id, title, servings, readyInMinutes, extendedIngredients, recipe_instructions)
+
+            pdf = PDF(id, title, servings, ready_in_minutes, extended_ingredients, recipe_instructions, extension)
             pdf.save(title)
 
-            os.remove(f"{id}.jpeg")
+            os.remove(f"{id}.{extension}")
             os.remove("GoodUnicornRegular-Rxev.pkl")
 
             sys.exit()
