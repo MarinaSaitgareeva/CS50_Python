@@ -9,7 +9,7 @@
 - The Final project is done as a part of the CS50’s Introduction to Programming with Python course by Harvard:
   Random Recipe Picker based on the preferred diet type, meal type, ingredients and maximum cooking time.
 
-- All recipes are from [Spoonacular API](https://spoonacular.com/food-api).
+- All recipes are from [Spoonacular API](https://rapidapi.com/spoonacular/api/recipe-food-nutrition).
 
 - If you like Random Recipe, you will be able to save it in a PDF file.
   ![PDF Example](Example_PDF.jpg)
@@ -108,6 +108,8 @@ It contains the main function as well as other ones which were a requirement in 
 ### Test functions: test_project.py
 
 It performs basic tests on the main file that can be executed via pytest.
+
+![pytest_result](Pytest_result.png)
 
 ```bash
 pytest test_project.py
