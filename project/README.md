@@ -9,7 +9,7 @@
 The Final project is done as a part of the CS50’s Introduction to Programming with Python course by Harvard:
 Random Recipe Picker based on the preferred diet type, meal type, ingredients and maximum cooking time.
 
-![PDF Example] (/Users/marinas/projects/CS50_Python/project/Example_PDF.png)
+![PDF Example](Example_PDF.jpg)
 
 ### Run the Random Recipe Picker:
 
