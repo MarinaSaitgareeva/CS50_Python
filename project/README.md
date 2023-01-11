@@ -6,11 +6,13 @@
 
 ### Description:
 
-The Final project is done as a part of the CS50’s Introduction to Programming with Python course by Harvard:
-Random Recipe Picker based on the preferred diet type, meal type, ingredients and maximum cooking time.
-If you like Random Recipe, you will be able to save it in a PDF file.
+- The Final project is done as a part of the CS50’s Introduction to Programming with Python course by Harvard:
+  Random Recipe Picker based on the preferred diet type, meal type, ingredients and maximum cooking time.
 
-![PDF Example](Example_PDF.jpg)
+- All recipes are from [Spoonacular API](https://spoonacular.com/food-api).
+
+- If you like Random Recipe, you will be able to save it in a PDF file.
+  ![PDF Example](Example_PDF.jpg)
 
 ### Run the Random Recipe Picker:
 
