@@ -9,6 +9,8 @@
 The Final project is done as a part of the CS50’s Introduction to Programming with Python course by Harvard:
 Random Recipe Picker based on the preferred diet type, meal type, ingredients and maximum cooking time.
 
+![PDF Example] (/Users/marinas/projects/CS50_Python/project/Example_PDF.png)
+
 ### Run the Random Recipe Picker:
 
 1. **Python 3.11** - Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
@@ -103,3 +105,7 @@ It contains the main function as well as other ones which were a requirement in 
 ### Test functions: test_project.py
 
 It performs basic tests on the main file that can be executed via pytest.
+
+```bash
+pytest test_project.py
+```
