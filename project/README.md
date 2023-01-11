@@ -7,7 +7,7 @@
 ### Description:
 
 - The Final project is done as a part of the CS50’s Introduction to Programming with Python course by Harvard:
-  Random Recipe Picker based on the preferred diet type, meal type, ingredients and maximum cooking time.
+  Random Recipe Picker based on the preferred diet type, meal type, ingredients, and maximum cooking time.
 
 - All recipes are from [Spoonacular API](https://rapidapi.com/spoonacular/api/recipe-food-nutrition).
 
