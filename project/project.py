@@ -129,9 +129,14 @@ def get_ingredients():
             "\n A comma-separated list of ingredients that the recipes should contain: "
             ).strip()
 
-        if (not ingredients) or ingredients.isnumeric():
+        try:
+            if (not ingredients) or ingredients.isnumeric():
+                raise Exception
+
+            return ingredients.lower()
+
+        except Exception:
             continue
-        return ingredients.lower()
 
 
 def get_max_ready_time():
@@ -173,7 +178,7 @@ def get_recipes(diet, meal_type, ingredients, max_ready_time, number):
 
 def get_random_recipe(recipes):
     recipe_number = random.randint(0, len(recipes))
-    print(f"{recipe_number} in {len(recipes)} recipes")
+    # print(f"{recipe_number} in {len(recipes)} recipes")
     id = recipes[recipe_number]["id"]
 
     url = f"https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/{id}/information"
